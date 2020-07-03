@@ -1,0 +1,22 @@
+image_vote:
+  repository: dockersamples/examplevotingapp_vote
+  pullPolicy: "IfNotPresent"
+  tag: "before"
+
+image_result:
+  repository: dockersamples/examplevotingapp_result
+  pullPolicy: "IfNotPresent"
+  tag: "before"
+
+image_worker:
+  repository: dockersamples/examplevotingapp_worker
+  pullPolicy: "IfNotPresent"
+
+image_redis:
+  repository: redis:alpine
+  pullPolicy: "IfNotPresent"
+
+image_db:
+  repository: postgres
+  pullPolicy: "IfNotPresent"
+  tag: "9.4"

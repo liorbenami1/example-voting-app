@@ -16,7 +16,7 @@ spec:
         app: db
     spec:
       containers:
-      - image: postgres:9.4
+      - image: "{{ .Values.image_db.repository}}:{{ .Values.image_db.tag}}"
         name: postgres
         env:
         - name: POSTGRES_USER

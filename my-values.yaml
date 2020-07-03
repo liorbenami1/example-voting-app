@@ -1,0 +1,23 @@
+image_vote:
+  repository: liorbenami/vote
+  pullPolicy: "IfNotPresent"
+  tag: "0.1"
+
+image_result:
+  repository: liorbenami/result
+  pullPolicy: "IfNotPresent"
+  tag: "0.1"
+
+image_worker:
+  repository: liorbenami/worker
+  pullPolicy: "IfNotPresent"
+  tag: "0.1"
+
+image_redis:
+  repository: redis:alpine
+  pullPolicy: "IfNotPresent"
+
+image_db:
+  repository: postgres
+  pullPolicy: "IfNotPresent"
+  tag: "9.4"

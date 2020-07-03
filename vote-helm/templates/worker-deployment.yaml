@@ -16,5 +16,6 @@ spec:
         app: worker
     spec:
       containers:
-      - image: dockersamples/examplevotingapp_worker
+      - image: "{{ .Values.image_worker.repository}}:{{ .Values.image_worker.tag}}"
+        imagePullPolicy: {{ .Values.image_worker.pullPolicy }}
         name: worker
