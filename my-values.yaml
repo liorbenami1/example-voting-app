@@ -1,16 +1,25 @@
 image_vote:
   repository: liorbenami/vote
   pullPolicy: "IfNotPresent"
+  port: 5000
+  targetPort: 80
+  nodePort: 31000
+  replicas: 1
   tag: "0.1"
 
 image_result:
   repository: liorbenami/result
   pullPolicy: "IfNotPresent"
+  port: 5001
+  targetPort: 80
+  nodePort: 31001
+  replicas: 1
   tag: "0.1"
 
 image_worker:
   repository: liorbenami/worker
   pullPolicy: "IfNotPresent"
+  replicas: 1
   tag: "0.1"
 
 image_redis:

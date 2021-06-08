@@ -6,7 +6,7 @@ metadata:
   name: worker
   namespace: vote
 spec:
-  replicas: 1
+  replicas: {{ .Values.image_worker.replicas}}
   selector:
     matchLabels:
       app: worker
