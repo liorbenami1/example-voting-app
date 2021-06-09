@@ -3,46 +3,37 @@ pipeline {
   stages {
     stage('Build result') {
       steps {
-        sh 'docker build -t dockersamples/result ./result'
+        sh 'docker build -t liorbenami/result ./result'
       }
     } 
     stage('Build vote') {
       steps {
-        sh 'docker build -t dockersamples/vote ./vote'
+        sh 'docker build -t liorbenami/vote ./vote'
       }
     }
     stage('Build worker') {
       steps {
-        sh 'docker build -t dockersamples/worker ./worker'
+        sh 'docker build -t liorbenami/worker ./worker'
       }
     }
     stage('Push result image') {
-      when {
-        branch 'master'
-      }
-      steps {
-        withDockerRegistry(credentialsId: 'dockerbuildbot-index.docker.io', url:'') {
-          sh 'docker push dockersamples/result'
+           steps {
+        withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
+          sh 'docker push liorbenami/result'
         }
       }
     }
     stage('Push vote image') {
-      when {
-        branch 'master'
-      }
-      steps {
-        withDockerRegistry(credentialsId: 'dockerbuildbot-index.docker.io', url:'') {
-          sh 'docker push dockersamples/vote'
+            steps {
+        withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
+          sh 'docker push liorbenami/vote'
         }
       }
     }
     stage('Push worker image') {
-      when {
-        branch 'master'
-      }
-      steps {
-        withDockerRegistry(credentialsId: 'dockerbuildbot-index.docker.io', url:'') {
-          sh 'docker push dockersamples/worker'
+            steps {
+        withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
+          sh 'docker push liorbenami/worker'
         }
       }
     }
