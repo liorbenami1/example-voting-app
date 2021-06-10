@@ -1,25 +1,27 @@
 pipeline {
-  agent any
+  agent {
+    label 'BUILD_AGENT'
+  }
   
   environment {
-    TF_WORKSPACE = 'terraform/learn-terraform-provision-gke-cluster' //Sets the Terraform Workspace
+    TF_WORKDIR = "${env.WORKSPACE}/learn-terraform-provision-gke-cluster" //Sets the Terraform Workspace
     TF_IN_AUTOMATION = 'true'
   }
   stages {
     stage('Terraform Init') {
       steps {
-        sh "${env.TERRAFORM_HOME}/terraform init -input=false"
+        sh "terraform -chdir=${env.TF_WORKDIR} init -input=false"
       }
     }
     stage('Terraform Plan') {
       steps {
-        sh "${env.TERRAFORM_HOME}/terraform plan -out=tfplan -input=false"
+        sh "terraform -chdir=${env.TF_WORKDIR} plan -out=tfplan -input=false -var-file='${env.TF_WORKDIR}/terraform.tfvars'"
       }
     }
     stage('Terraform Apply') {
       steps {
         input 'Apply Plan'
-        sh "${env.TERRAFORM_HOME}/terraform apply -input=false tfplan"
+        sh "terraform -chdir=${env.TF_WORKDIR} apply -input=false tfplan"
       }
     }
   }
