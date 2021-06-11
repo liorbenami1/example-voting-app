@@ -5,9 +5,18 @@ pipeline {
   
   parameters {
               string(name: 'VALUES_FILE_NAME', defaultValue: 'dev-values.yaml', description: 'The Helm values file name')
+              string(name: 'GCP_CLUSTER_NAME', defaultValue: 'tensile-method-310112-gke', description: 'The GCP cluster name')
+              string(name: 'GCP_PROJECT_NAME', defaultValue: 'tensile-method-310112', description: 'The GCP project name')
+              string(name: 'GCP_REGION_NAME', defaultValue: 'us-central1', description: 'The GCP region name')
           }
 
   stages {
+  stage('gcloud config') {
+        steps {
+          sh "gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}"
+        }
+      }
+
     stage('Helm install') {
       steps {
         sh "helm install my-vote -f ${params.VALUES_FILE_NAME} vote-helm"
