@@ -54,6 +54,12 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
+terraform {
+  backend "gcs" {
+    bucket  = "tf-state-lior-bucket"
+    prefix  = "terraform/state"
+  }
+}
 
 # # Kubernetes provider
 # # The Terraform Kubernetes Provider configuration below is used as a learning reference only. 
