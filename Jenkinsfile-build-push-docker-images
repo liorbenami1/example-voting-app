@@ -1,39 +1,47 @@
 pipeline {
-  agent any
+  agent {
+      label 'BUILD_AGENT'
+    }
+
   stages {
     stage('Build result') {
       steps {
-        sh 'docker build -t liorbenami/result ./result'
+        sh "docker build -t liorbenami/result:${env.BUILD_ID} ./result"
       }
-    } 
+    }
+
     stage('Build vote') {
       steps {
-        sh 'docker build -t liorbenami/vote ./vote'
+        sh "docker build -t liorbenami/vote:${env.BUILD_ID} ./vote"
       }
     }
+
     stage('Build worker') {
       steps {
-        sh 'docker build -t liorbenami/worker ./worker'
+        sh "docker build -t liorbenami/worker:${env.BUILD_ID} ./worker"
       }
     }
+
     stage('Push result image') {
            steps {
         withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
-          sh 'docker push liorbenami/result'
+          sh "docker push liorbenami/result:${env.BUILD_ID}"
         }
       }
     }
+
     stage('Push vote image') {
             steps {
         withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
-          sh 'docker push liorbenami/vote'
+          sh "docker push liorbenami/vote:${env.BUILD_ID}"
         }
       }
     }
+
     stage('Push worker image') {
             steps {
         withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
-          sh 'docker push liorbenami/worker'
+          sh "docker push liorbenami/worker:${env.BUILD_ID}"
         }
       }
     }

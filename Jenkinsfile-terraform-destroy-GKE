@@ -15,13 +15,13 @@ pipeline {
     }
     stage('Terraform Plan') {
       steps {
-        sh "terraform -chdir=${env.TF_WORKDIR} plan -out=tfplan -input=false -var-file='${env.TF_WORKDIR}/terraform.tfvars'"
+        sh "terraform -chdir=${env.TF_WORKDIR} plan -destroy -out=tfplan -input=false -var-file='${env.TF_WORKDIR}/terraform.tfvars'"
       }
     }
-    stage('Terraform Distroy') {
+    stage('Terraform destroy') {
       steps {
-        input 'Distroy Plan'
-        sh "terraform -chdir=${env.TF_WORKDIR} distroy -input=false tfplan"
+        input 'Terraform destroy'
+        sh "terraform -chdir=${env.TF_WORKDIR} apply -input=false tfplan"
       }
     }
   }
