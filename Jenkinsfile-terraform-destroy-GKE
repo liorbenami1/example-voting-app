@@ -1,0 +1,28 @@
+pipeline {
+  agent {
+    label 'BUILD_AGENT'
+  }
+  
+  environment {
+    TF_WORKDIR = "${env.WORKSPACE}/learn-terraform-provision-gke-cluster" //Sets the Terraform Workspace
+    TF_IN_AUTOMATION = 'true'
+  }
+  stages {
+    stage('Terraform Init') {
+      steps {
+        sh "terraform -chdir=${env.TF_WORKDIR} init -input=false"
+      }
+    }
+    stage('Terraform Plan') {
+      steps {
+        sh "terraform -chdir=${env.TF_WORKDIR} plan -out=tfplan -input=false -var-file='${env.TF_WORKDIR}/terraform.tfvars'"
+      }
+    }
+    stage('Terraform Distroy') {
+      steps {
+        input 'Distroy Plan'
+        sh "terraform -chdir=${env.TF_WORKDIR} distroy -input=false tfplan"
+      }
+    }
+  }
+}
