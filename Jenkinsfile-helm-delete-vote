@@ -5,7 +5,6 @@ pipeline {
   
   parameters {
               string(name: 'HELM_NAME', defaultValue: 'my-vote', description: 'The Helm name')
-              string(name: 'HELM_DIR_NAME', defaultValue: 'vote-helm', description: 'The Helm directory name')
               string(name: 'VALUES_FILE_NAME', defaultValue: 'dev-values.yaml', description: 'The Helm values file name')
               string(name: 'GCP_CLUSTER_NAME', defaultValue: 'tensile-method-310112-gke', description: 'The GCP cluster name')
               string(name: 'GCP_PROJECT_NAME', defaultValue: 'tensile-method-310112', description: 'The GCP project name')
@@ -21,29 +20,19 @@ pipeline {
           sh "gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}"
         }
       }
-  stage('Helm repo update') {
-        steps {
-          sh "helm repo update"
-        }
-      }
 
-    stage('Helm install') {
+    stage('Helm delete') {
       steps {
-        sh "helm install ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}"
+        sh "helm delete ${params.HELM_NAME}"
       }
     }
 
-    stage('gcloud create firewall-rules') {
+    stage('gcloud delete firewall-rules') {
           steps {
-            sh "gcloud compute firewall-rules create node-port-${params.VOTE_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.VOTE_PORT}"
-            sh "gcloud compute firewall-rules create node-port-${params.RESULT_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.RESULT_PORT}"
+            sh "gcloud compute firewall-rules delete node-port-${params.VOTE_PORT}"
+            sh "gcloud compute firewall-rules delete node-port-${params.RESULT_PORT}"
           }
         }
 
-    stage('kubectl get nodes') {
-          steps {
-            sh "kubectl get nodes -o wide"
-          }
-       }
   }
 }
