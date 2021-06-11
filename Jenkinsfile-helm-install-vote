@@ -1,0 +1,17 @@
+pipeline {
+  agent {
+    label 'BUILD_AGENT'
+  }
+  
+  parameters {
+              string(name: 'VALUES_FILE_NAME', defaultValue: 'dev-values.yaml', description: 'The Helm values file name')
+          }
+
+  stages {
+    stage('Helm install') {
+      steps {
+        sh "helm install my-vote -f ${params.VALUES_FILE_NAME} vote-helm"
+      }
+    }
+  }
+}
