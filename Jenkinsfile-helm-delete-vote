@@ -32,7 +32,20 @@ pipeline {
             sh "gcloud compute firewall-rules delete node-port-${params.VOTE_PORT}"
             sh "gcloud compute firewall-rules delete node-port-${params.RESULT_PORT}"
           }
-        }
+    }
+
+    stage('delete kubeview') {
+      steps {
+        sh "helm delete my-kubeview"
+      }
+    }
+
+    stage('delete prometheus-grafana') {
+      steps {
+        sh "helm delete my-kube-prometheus-stack"
+      }
+    }
+
 
   }
 }

@@ -1,9 +1,19 @@
+
+/*
+    Create the kubernetes namespace
+ */
+def createNamespace (namespace) {
+    echo "Creating namespace ${namespace} if needed"
+
+    sh "[ ! -z \"\$(kubectl get ns ${namespace} -o name 2>/dev/null)\" ] || kubectl create ns ${namespace}"
+}
+
 pipeline {
-  agent {
-    label 'BUILD_AGENT'
-  }
+    agent {
+        label 'BUILD_AGENT'
+    }
   
-  parameters {
+    parameters {
               string(name: 'HELM_NAME', defaultValue: 'my-vote', description: 'The Helm name')
               string(name: 'HELM_DIR_NAME', defaultValue: 'vote-helm', description: 'The Helm directory name')
               string(name: 'VALUES_FILE_NAME', defaultValue: 'dev-values.yaml', description: 'The Helm values file name')
@@ -13,32 +23,60 @@ pipeline {
               string(name: 'GCP_CLUSTER_VPC_NAME', defaultValue: 'tensile-method-310112-vpc', description: 'The GCP VPC name')
               string(name: 'VOTE_PORT', defaultValue: '31000', description: 'The VOTE app port')
               string(name: 'RESULT_PORT', defaultValue: '31001', description: 'The RESULT app port')
-          }
-
-  stages {
-  stage('gcloud config') {
-        steps {
-          sh "gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}"
-        }
-      }
-
-    stage('Helm install') {
-      steps {
-        sh "helm install ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}"
-      }
     }
 
-    stage('gcloud create firewall-rules') {
-          steps {
-            sh "gcloud compute firewall-rules create node-port-${params.VOTE_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.VOTE_PORT}"
-            sh "gcloud compute firewall-rules create node-port-${params.RESULT_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.RESULT_PORT}"
+    stages {
+        stage('gcloud config') {
+            steps {
+                sh "gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}"
+            }
           }
+
+        stage('Helm install vote') {
+            steps {
+                script {
+                    namespace = 'vote'
+                    createNamespace (namespace)
+                    sh "helm upgrade --install ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} --namespace vote ${params.HELM_DIR_NAME}"
+                }
+            }
         }
 
-    stage('kubectl get nodes') {
-          steps {
-            sh "kubectl get nodes -o wide"
-          }
+        stage('gcloud create firewall-rules') {
+            steps {
+                sh "gcloud compute firewall-rules create node-port-${params.VOTE_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.VOTE_PORT}"
+                sh "gcloud compute firewall-rules create node-port-${params.RESULT_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.RESULT_PORT}"
+            }
+        }
+
+        stage('helm install kubeview') {
+            steps {
+                script {
+                    sh "helm repo add kubeview https://benc-uk.github.io/kubeview/charts ; helm repo update"
+                    namespace = 'kubeview'
+                    createNamespace (namespace)
+                    sh "helm upgrade --install my-kubeview kubeview/kubeview --namespace ${namespace} --version 0.1.20"
+                }
+            }
+        }
+
+        stage('helm install prometheus-grafana') {
+            steps {
+                script {
+                    sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts ; helm repo update"
+                    namespace = 'prom'
+                    createNamespace (namespace)
+                    sh "helm upgrade --install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace ${namespace} --version 16.7.0"
+                }
+            }
+        }
+
+        stage('kubectl get nodes') {
+            steps {
+                sh "kubectl get nodes -o wide"
+                sh "kubectl get all -n prom"
+                sh "kubectl get all -n kubeview"
+            }
        }
-  }
+    }
 }
