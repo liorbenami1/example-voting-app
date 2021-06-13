@@ -1,12 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    meta.helm.sh/release-name: my-vote
-    meta.helm.sh/release-namespace: vote
   labels:
     app: vote
-    app.kubernetes.io/managed-by: helm
   name: vote
   namespace: vote
 spec:

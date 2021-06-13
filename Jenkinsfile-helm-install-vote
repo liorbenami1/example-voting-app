@@ -1,4 +1,5 @@
 
+
 /*
     Create the kubernetes namespace
  */
@@ -7,6 +8,7 @@ def createNamespace (namespace) {
 
     sh "[ ! -z \"\$(kubectl get ns ${namespace} -o name 2>/dev/null)\" ] || kubectl create ns ${namespace}"
 }
+
 
 pipeline {
     agent {
@@ -35,9 +37,7 @@ pipeline {
         stage('Helm install vote') {
             steps {
                 script {
-                    namespace = 'vote'
-                    createNamespace (namespace)
-                    sh "helm upgrade --install ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} --namespace vote ${params.HELM_DIR_NAME}"
+                    sh "helm install ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}"
                 }
             }
         }
@@ -55,7 +55,7 @@ pipeline {
                     sh "helm repo add kubeview https://benc-uk.github.io/kubeview/charts ; helm repo update"
                     namespace = 'kubeview'
                     createNamespace (namespace)
-                    sh "helm upgrade --install my-kubeview kubeview/kubeview --namespace ${namespace} --version 0.1.20"
+                    sh "helm install my-kubeview kubeview/kubeview --namespace ${namespace} --version 0.1.20"
                 }
             }
         }
@@ -66,16 +66,19 @@ pipeline {
                     sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts ; helm repo update"
                     namespace = 'prom'
                     createNamespace (namespace)
-                    sh "helm upgrade --install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace ${namespace} --version 16.7.0"
+                    sh "helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace ${namespace} --version 16.7.0"
                 }
             }
         }
 
         stage('kubectl get nodes') {
             steps {
-                sh "kubectl get nodes -o wide"
-                sh "kubectl get all -n prom"
-                sh "kubectl get all -n kubeview"
+                script {
+                    sh "kubectl get nodes -o wide"
+                    sh "kubectl get --namespace kubeview svc my-kubeview"
+                    sh "kubectl get svc --namespace kubeview my-kubeview -o jsonpath='{.status.loadBalancer.ingress[0].ip}'"
+                    sh "kubectl --namespace prom get pods -l release=my-kube-prometheus-stack"
+                }
             }
        }
     }

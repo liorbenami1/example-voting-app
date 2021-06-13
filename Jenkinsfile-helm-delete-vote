@@ -1,51 +1,49 @@
 pipeline {
-  agent {
-    label 'BUILD_AGENT'
-  }
+    agent {
+        label 'BUILD_AGENT'
+    }
   
-  parameters {
-              string(name: 'HELM_NAME', defaultValue: 'my-vote', description: 'The Helm name')
-              string(name: 'VALUES_FILE_NAME', defaultValue: 'dev-values.yaml', description: 'The Helm values file name')
-              string(name: 'GCP_CLUSTER_NAME', defaultValue: 'tensile-method-310112-gke', description: 'The GCP cluster name')
-              string(name: 'GCP_PROJECT_NAME', defaultValue: 'tensile-method-310112', description: 'The GCP project name')
-              string(name: 'GCP_REGION_NAME', defaultValue: 'us-central1', description: 'The GCP region name')
-              string(name: 'GCP_CLUSTER_VPC_NAME', defaultValue: 'tensile-method-310112-vpc', description: 'The GCP VPC name')
-              string(name: 'VOTE_PORT', defaultValue: '31000', description: 'The VOTE app port')
-              string(name: 'RESULT_PORT', defaultValue: '31001', description: 'The RESULT app port')
-          }
+    parameters {
+        string(name: 'HELM_NAME', defaultValue: 'my-vote', description: 'The Helm name')
+        string(name: 'VALUES_FILE_NAME', defaultValue: 'dev-values.yaml', description: 'The Helm values file name')
+        string(name: 'GCP_CLUSTER_NAME', defaultValue: 'tensile-method-310112-gke', description: 'The GCP cluster name')
+        string(name: 'GCP_PROJECT_NAME', defaultValue: 'tensile-method-310112', description: 'The GCP project name')
+        string(name: 'GCP_REGION_NAME', defaultValue: 'us-central1', description: 'The GCP region name')
+        string(name: 'GCP_CLUSTER_VPC_NAME', defaultValue: 'tensile-method-310112-vpc', description: 'The GCP VPC name')
+        string(name: 'VOTE_PORT', defaultValue: '31000', description: 'The VOTE app port')
+        string(name: 'RESULT_PORT', defaultValue: '31001', description: 'The RESULT app port')
+    }
 
-  stages {
-  stage('gcloud config') {
-        steps {
-          sh "gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}"
+    stages {
+        stage('gcloud config') {
+            steps {
+                sh "gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}"
+            }
         }
-      }
 
-    stage('Helm delete') {
-      steps {
-        sh "helm delete ${params.HELM_NAME}"
-      }
+        stage('Helm delete vote') {
+            steps {
+               sh "helm delete ${params.HELM_NAME}"
+            }
+        }
+
+        stage('gcloud delete firewall-rules') {
+            steps {
+                sh "gcloud compute firewall-rules delete node-port-${params.VOTE_PORT}"
+                sh "gcloud compute firewall-rules delete node-port-${params.RESULT_PORT}"
+            }
+        }
+
+        stage('helm delete kubeview') {
+            steps {
+                sh "kubectl delete namespace kubeview"
+            }
+        }
+
+        stage('helm delete prometheus-grafana') {
+            steps {
+                sh "kubectl delete namespace prom"
+            }
+        }
     }
-
-    stage('gcloud delete firewall-rules') {
-          steps {
-            sh "gcloud compute firewall-rules delete node-port-${params.VOTE_PORT}"
-            sh "gcloud compute firewall-rules delete node-port-${params.RESULT_PORT}"
-          }
-    }
-
-    stage('delete kubeview') {
-      steps {
-        sh "helm delete my-kubeview"
-      }
-    }
-
-    stage('delete prometheus-grafana') {
-      steps {
-        sh "helm delete my-kube-prometheus-stack"
-      }
-    }
-
-
-  }
 }
