@@ -49,24 +49,18 @@ pipeline {
             }
         }
 
-        stage('helm install kubeview') {
+        stage('helm install prometheus') {
             steps {
                 script {
-                    sh "helm repo add kubeview https://benc-uk.github.io/kubeview/charts ; helm repo update"
-                    namespace = 'kubeview'
-                    createNamespace (namespace)
-                    sh "helm install my-kubeview kubeview/kubeview --namespace ${namespace} --version 0.1.20"
+                    sh "helm install my-prom prometheus"
                 }
             }
         }
 
-        stage('helm install prometheus-grafana') {
+        stage('helm install grafana') {
             steps {
                 script {
-                    sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts ; helm repo update"
-                    namespace = 'prom'
-                    createNamespace (namespace)
-                    sh "helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace ${namespace} --version 16.7.0"
+                    sh "helm install my-grafana grafana"
                 }
             }
         }
@@ -75,9 +69,35 @@ pipeline {
             steps {
                 script {
                     sh "kubectl get nodes -o wide"
-                    sh "kubectl get --namespace kubeview svc my-kubeview"
-                    sh "kubectl get svc --namespace kubeview my-kubeview -o jsonpath='{.status.loadBalancer.ingress[0].ip}'"
-                    sh "kubectl --namespace prom get pods -l release=my-kube-prometheus-stack"
+                    sh "kubectl get pods -l release=my-prom"
+
+                    echo "expose prometheus:"
+                    def POD_NAME = sh (
+                        script: 'kubectl get pods --namespace default -l app=prometheus,component=server -o jsonpath={.items[0].metadata.name}',
+                        returnStdout: true).trim()
+                    sh "kubectl --namespace default port-forward ${POD_NAME} 9090 &"
+
+                    echo "expose alert manager:"
+                    POD_NAME = sh (
+                        script: 'kubectl get pods --namespace default -l app=prometheus,component=alertmanager -o jsonpath={.items[0].metadata.name}',
+                        returnStdout: true).trim()
+                    sh "kubectl --namespace default port-forward ${POD_NAME} 9093 &"
+
+                    echo "expose PushGateway:"
+                    POD_NAME = sh (
+                        script: 'kubectl get pods --namespace default -l app=prometheus,component=pushgateway -o jsonpath={.items[0].metadata.name}',
+                        returnStdout: true).trim()
+                    sh "kubectl --namespace default port-forward ${POD_NAME} 9091 &"
+
+                    echo "expose grafana"
+                    sh "kubectl port-forward svc/my-grafana 8080:3000 &"
+                    echo "Get the grafana admin credentials:"
+                    echo "User: admin"
+                    def pass = sh (
+                        script: 'kubectl get secret my-grafana-admin --namespace default -o jsonpath={.data.GF_SECURITY_ADMIN_PASSWORD} | base64 --decode',
+                        returnStdout: true).trim()
+                    echo "Password: ${pass}"
+                    sh "kubectl get svc my-grafana"
                 }
             }
        }

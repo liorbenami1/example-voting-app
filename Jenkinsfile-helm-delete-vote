@@ -34,16 +34,17 @@ pipeline {
             }
         }
 
-        stage('helm delete kubeview') {
+        stage('helm delete prometheus') {
             steps {
-                sh "kubectl delete namespace kubeview"
+                sh "helm delete my-prom"
             }
         }
 
-        stage('helm delete prometheus-grafana') {
+        stage('helm delete grafana') {
             steps {
-                sh "kubectl delete namespace prom"
+                sh "helm delete my-grafana"
             }
         }
+
     }
 }
