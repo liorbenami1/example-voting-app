@@ -8,7 +8,7 @@ import sys
 import yaml
 
 
-def main():
+def main() -> dict:
     """
     :brief: The Release utility script, currently - 2021-05-13 is automating the release procedure by executing the stages below:
     1. Checkout to target branch - git checkout "target_branch" e.g release/latest
@@ -64,7 +64,7 @@ def main():
     result = subprocess.getstatusoutput(cmd)
     error_check(result, cmd)
 
-    # Read current version from dev-values.yaml file
+    # Read current versions from dev-values.yaml file
     version_info: dict = read_current_version()
 
     for key, value in version_info.items():
@@ -134,6 +134,7 @@ def main():
             print ("cmd = " + cmd)
             result = subprocess.getstatusoutput(cmd)
             error_check(result, cmd)
+    print (version_info)
 
 def read_current_version() -> dict:
     """
@@ -151,9 +152,6 @@ def read_current_version() -> dict:
 
     print (dict_ver)
     return dict_ver
-
-
-
 
 def increment_version(image_name: str, current_version: str, increment: str) -> str:
     """
