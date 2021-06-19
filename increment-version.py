@@ -8,7 +8,7 @@ import sys
 import yaml
 
 
-def main():
+def main() -> dict:
     """
     :brief: The Release utility script, currently - 2021-05-13 is automating the release procedure by executing the stages below:
     1. Checkout to target branch - git checkout "target_branch" e.g release/latest
@@ -191,4 +191,4 @@ def error_check(result: str, cmd: str):
 
 
 if __name__ == "__main__":
-    main() -> dict:
+    main()
