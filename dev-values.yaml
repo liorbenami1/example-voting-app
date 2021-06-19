@@ -1,3 +1,5 @@
+appVersion:
+  tag: '2.1'
 image_db:
   pullPolicy: IfNotPresent
   repository: postgres
@@ -26,5 +28,3 @@ image_worker:
   replicas: 1
   repository: liorbenami/worker
   tag: '0.2'
-appVersion:
-  tag: "2.0"
