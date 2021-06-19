@@ -41,11 +41,11 @@ def main():
 
     parser.add_argument("-t", "--target_branch", type=str, help="e.g release/latest branch", required=True)
 
-    parser.add_argument("-v", "--is_vote_change", type=bool, help="indicate if vote_image changed", default='false')
+    parser.add_argument("-v", "--is_vote_change",  action='store_true', help="indicate if vote_image changed") #default='false'
 
-    parser.add_argument("-r", "--is_result_change", type=bool, help="indicate if image_result changed", default='false')
+    parser.add_argument("-r", "--is_result_change", action='store_true', help="indicate if image_result changed") #default='false'
 
-    parser.add_argument("-w", "--is_worker_change", type=bool, help="indicate if image_worker changed", default='false')
+    parser.add_argument("-w", "--is_worker_change", action='store_true', help="indicate if image_worker changed") #default='false'
 
     # Execute the parse_args() method
     args: NameSpace = parser.parse_args()
