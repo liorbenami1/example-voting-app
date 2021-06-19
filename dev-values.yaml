@@ -1,32 +1,28 @@
-image_vote:
-  repository: liorbenami/vote
-  pullPolicy: "IfNotPresent"
-  port: 5000
-  targetPort: 80
-  nodePort: 31000
-  replicas: 1
-  tag: "1.9"
-
-image_result:
-  repository: liorbenami/result
-  pullPolicy: "IfNotPresent"
-  port: 5001
-  targetPort: 80
-  nodePort: 31001
-  replicas: 1
-  tag: "0.5"
-
-image_worker:
-  repository: liorbenami/worker
-  pullPolicy: "IfNotPresent"
-  replicas: 1
-  tag: "0.2"
-
-image_redis:
-  repository: redis:alpine
-  pullPolicy: "IfNotPresent"
-
 image_db:
+  pullPolicy: IfNotPresent
   repository: postgres
-  pullPolicy: "IfNotPresent"
-  tag: "9.4"
+  tag: '9.4'
+image_redis:
+  pullPolicy: IfNotPresent
+  repository: redis:alpine
+image_result:
+  nodePort: 31001
+  port: 5001
+  pullPolicy: IfNotPresent
+  replicas: 1
+  repository: liorbenami/result
+  tag: '0.5'
+  targetPort: 80
+image_vote:
+  nodePort: 31000
+  port: 5000
+  pullPolicy: IfNotPresent
+  replicas: 1
+  repository: liorbenami/vote
+  tag: '1.10'
+  targetPort: 80
+image_worker:
+  pullPolicy: IfNotPresent
+  replicas: 1
+  repository: liorbenami/worker
+  tag: '0.2'
