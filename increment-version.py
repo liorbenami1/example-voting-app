@@ -134,7 +134,10 @@ def main() -> dict:
             print ("cmd = " + cmd)
             result = subprocess.getstatusoutput(cmd)
             error_check(result, cmd)
-    print (version_info)
+
+    # print current version to curr_ver.yaml (new file)
+    with open("curr_ver.yaml", "w+") as file:
+        yaml.dump(version_info, file, default_flow_style=False)
 
 def read_current_version() -> dict:
     """
