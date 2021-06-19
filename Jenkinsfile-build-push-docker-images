@@ -57,10 +57,15 @@ pipeline {
             script {
                 def datas = readYaml file: 'curr_ver.yaml'
                 echo "datas.appVersion = ${datas.appVersion}"
-                env.IMAGE_VOTE           = datas.appVersion
-                env.IMAGE_RESULT         = datas.image_result
-                env.IMAGE_APP_VERSION    = datas.image_vote
-                env.IMAGE_WORKER         = datas.image_worker
+                env.IMAGE_VOTE           = "${datas.appVersion}"
+                env.IMAGE_RESULT         = "${datas.image_result}"
+                env.IMAGE_APP_VERSION    = "${datas.image_vote}"
+                env.IMAGE_WORKER         = "${datas.image_worker}"
+
+                echo "env.IMAGE_VOTE = ${env.IMAGE_VOTE}"
+                echo "env.IMAGE_RESULT = ${env.IMAGE_RESULT}"
+                echo "env.IMAGE_APP_VERSION = ${env.IMAGE_APP_VERSION}"
+                echo "env.IMAGE_WORKER = ${env.IMAGE_WORKER}"
 
                 if (env.IMAGE_VOTE == "0") {
                     print ("Can't read IMAGE_VOTE version")
