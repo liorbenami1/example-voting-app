@@ -1,7 +1,5 @@
 #!groovy
 
-@Library('buildUtils')
-
 def call() {
     pipeline {
         agent {
@@ -57,6 +55,7 @@ def call() {
 
         stage('Read current versions') {
             steps {
+                library 'buildUtils'
                 readCurrentVersion()
             }
         }
