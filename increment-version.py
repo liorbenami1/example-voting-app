@@ -59,24 +59,24 @@ def main():
     # Read current version from dev-values.yaml file
     version_info: str = read_current_version()
 
-    #current_version: dict = version_info
-   # max_ver = max(version_info.values())
-    #print ("max_ver = " + max_ver)
-
-    # Tag commit with current app versions
-    cmd = "git tag v" + version_info
+    cmd = "git tag -n v" + version_info
     result = subprocess.getstatusoutput(cmd)
-    error_check(result, cmd)
+    print (result[0])
+    if result[0] != 0:
+        # Tag commit with current app versions
+        cmd = "git tag v" + version_info
+        result = subprocess.getstatusoutput(cmd)
+        error_check(result, cmd)
 
-    # Push tag to remote
-    cmd = "git push origin v" + version_info
-    result = subprocess.getstatusoutput(cmd)
-    error_check(result, cmd)
+        # Push tag to remote
+        cmd = "git push origin v" + version_info
+        result = subprocess.getstatusoutput(cmd)
+        error_check(result, cmd)
 
-    # Push target branch
-    cmd = "git push"
-    result = subprocess.getstatusoutput(cmd)
-    error_check(result, cmd)
+        # Push target branch
+        cmd = "git push"
+        result = subprocess.getstatusoutput(cmd)
+        error_check(result, cmd)
 
     # Checkout to source branch
     cmd = "git checkout " + args.source_branch
