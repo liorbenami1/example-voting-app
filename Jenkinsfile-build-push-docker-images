@@ -30,10 +30,11 @@ pipeline {
                 }
                 try {
                     def currentVersions = sh(returnStdout: true, script: "python3 ${env.WORKSPACE}/increment-version.py -p ${env.WORKSPACE} -s ${params.SOURCE_BRANCH_NAME} -t ${params.TARGET_BRANCH_NAME} ${extra_args}").trim()
+                }
                     //withCredentials([usernamePassword(credentialsId: 'github-cred', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                     //def currentVersions = sh(returnStdout: true, script: "python3 ${env.WORKSPACE}/increment-version.py -p ${env.WORKSPACE} -s ${params.SOURCE_BRANCH_NAME} -t ${params.TARGET_BRANCH_NAME} ${extra_args}").trim()
-                    echo "${currentVersions}"
-                    }
+                echo "${currentVersions}"
+
                 }
                 catch (InterruptedException e) {
                     currentBuild.result = "ABORTED"
