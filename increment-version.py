@@ -64,7 +64,7 @@ def main():
     result = subprocess.getstatusoutput(cmd)
     error_check(result, cmd)
 
-    # Read current version from dev-values.yaml file
+    # Read current versions from dev-values.yaml file
     version_info: dict = read_current_version()
 
     for key, value in version_info.items():
@@ -134,6 +134,7 @@ def main():
             print ("cmd = " + cmd)
             result = subprocess.getstatusoutput(cmd)
             error_check(result, cmd)
+    return version_info
 
 def read_current_version() -> dict:
     """
@@ -151,9 +152,6 @@ def read_current_version() -> dict:
 
     print (dict_ver)
     return dict_ver
-
-
-
 
 def increment_version(image_name: str, current_version: str, increment: str) -> str:
     """
@@ -193,4 +191,4 @@ def error_check(result: str, cmd: str):
 
 
 if __name__ == "__main__":
-    main()
+    main() -> dict:

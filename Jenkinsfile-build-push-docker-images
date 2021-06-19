@@ -3,7 +3,41 @@ pipeline {
       label 'BUILD_AGENT'
     }
 
+    parameters {
+      string(name: 'SOURCE_BRANCH_NAME', defaultValue: 'master', description: 'Git source branch to be released')
+      string(name: 'TARGET_BRANCH_NAME', defaultValue: 'release/latest', description: 'Git Target branch of released version')
+      booleanParam(name: 'IS_VOTE_CHANGE', defaultValue: false, description: 'indicate if vote_image changed')
+      booleanParam(name: 'IS_RESULT_CHANGE', defaultValue: false, description: 'indicate if image_result changed')
+      booleanParam(name: 'IS_WORKER_CHANGE', defaultValue: false, description: 'indicate if image_worker changed')
+    }
+
   stages {
+    stage('Increment Version') {
+        script {
+            def extra_args = ""
+            if (params.IS_VOTE_CHANGE) {
+                extra_args += "--is_vote_change "
+            }
+            if (params.IS_RESULT_CHANGE) {
+                extra_args += "--is_result_change "
+            }
+            if (params.IS_WORKER_CHANGE) {
+                extra_args += "--is_worker_change "
+            }
+            try {
+                def currentVersions = sh(returnStdout: true, script: "python3 ${env.WORKSPACE}/increment-version.py -p ${env.WORKSPACE} -s params.SOURCE_BRANCH_NAME -t params.TARGET_BRANCH_NAME ${extra_args}").trim()
+                echo "${currentVersions}"
+
+                catch (InterruptedException e) {
+                    currentBuild.result = "ABORTED"
+                }
+                catch (Exception e) {
+                    currentBuild.result = "FAILURE"
+                }
+            }
+        }
+    }
+    /*
     stage('Build result') {
       steps {
         sh "docker build -t liorbenami/result:${env.BUILD_ID} ./result"
@@ -45,5 +79,6 @@ pipeline {
         }
       }
     }
+    */
   }
 }
