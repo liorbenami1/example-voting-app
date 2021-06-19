@@ -53,16 +53,16 @@ pipeline {
     stage('Read current versions') {
         steps {
             script {
-                    #!/usr/bin/python3.6
+                @Grab('org.yaml:snakeyaml:1.17')
 
-                    import subprocess
-                    import os
-                    import re
-                    import sys
-                    import yaml
+                import org.yaml.snakeyaml.Yaml
 
-                    with open("curr_ver.yaml", "r") as file:
-                        ver_list = yaml.load(file)
+                Yaml parser = new Yaml()
+                List example = parser.load(("curr_ver.yaml" as File).text)
+
+                example.each{println it.subject}
+
+                   /*
 
                     for key, value in ver_list.items():
                         if key ==  "image_vote":
@@ -77,6 +77,7 @@ pipeline {
                         if key == "appVersion":
                             env.IMAGE_APP_VERSION
                             continue
+                    */
 
                     if env.IMAGE_VOTE == "0":
                         print ("Can't read IMAGE_VOTE version")
