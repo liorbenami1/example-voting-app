@@ -86,7 +86,7 @@ pipeline {
     stage('Build result') {
         steps {
             script {
-                if (env.IS_RESULT_CHANGE) {
+                if ("${env.IS_RESULT_CHANGE}") {
                     sh ("docker build -t liorbenami/result:${IMAGE_RESULT} ./result")
                 }else {
                     echo "Result image didn't change. No need to build. Abort"
@@ -98,7 +98,7 @@ pipeline {
     stage('Build vote') {
       steps {
           script {
-              if (env.IS_VOTE_CHANGE) {
+              if ("${env.IS_VOTE_CHANGE}") {
                   sh ("docker build -t liorbenami/vote:${IMAGE_VOTE} ./vote")
               }else {
                   echo "Vote image didn't change. No need to build. Abort"
@@ -110,7 +110,7 @@ pipeline {
     stage('Build worker') {
         steps {
             script {
-                if (env.IS_WORKER_CHANGE) {
+                if ("${env.IS_WORKER_CHANGE}") {
                     sh ("docker build -t liorbenami/worker:${IMAGE_WORKER} ./worker")
                 }else {
                     echo "Worker image didn't change. No need to build. Abort"
@@ -122,7 +122,7 @@ pipeline {
     stage('Push result image') {
         steps {
             script {
-                if (env.IS_RESULT_CHANGE) {
+                if ("${env.IS_RESULT_CHANGE}") {
                     withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
                     sh "docker push liorbenami/result:${IMAGE_RESULT}"
                     }
@@ -134,7 +134,7 @@ pipeline {
     stage('Push vote image') {
         steps {
             script {
-                if (env.IS_VOTE_CHANGE) {
+                if ("${env.IS_VOTE_CHANGE}") {
                     withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
                     sh "docker push liorbenami/vote:${IMAGE_VOTE}"
                     }
@@ -146,7 +146,7 @@ pipeline {
     stage('Push worker image') {
         steps {
             script {
-                if (env.IS_WORKER_CHANGE) {
+                if ("${env.IS_WORKER_CHANGE}") {
                     withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
                     sh "docker push liorbenami/worker:${IMAGE_WORKER}"
                     }
