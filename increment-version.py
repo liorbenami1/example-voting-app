@@ -10,14 +10,14 @@ import yaml
 
 def main():
     """
-    :brief: The Release utility script, currently - 2021-05-13 is automating the  sysroot release procedure by executing the stages below:
-    1. Checkout to target branch - git checkout "target_branch" e.g release/sysroot
+    :brief: The Release utility script, currently - 2021-05-13 is automating the release procedure by executing the stages below:
+    1. Checkout to target branch - git checkout "target_branch" e.g release/latest
     2. Reset target branch HEAD to origin source branch - e.g git reset --hard origin/master
-    3. Tag commit with current sysroot  version - e.g git tag v0.0.53
-    4. Push git tag to remote - e.g git push origin v0.0.52
+    3. Tag commit with current version - e.g git tag vote_image_v0.10
+    4. Push git tag to remote - e.g git push origin vote_image_v0.10
     5. push target branch - e.g git push
     6. checkout source branch - e.g git checkout source_branch
-    7. increment source sysroot version
+    7. increment source version
     8. add and commit change to source_branch
     9. push changes to source_branch.
 
@@ -41,98 +41,119 @@ def main():
 
     parser.add_argument("-t", "--target_branch", type=str, help="e.g release/latest branch", required=True)
 
+    parser.add_argument("-v", "--is_vote_change", type=bool, help="indicate if vote_image changed", default='false')
+
+    parser.add_argument("-r", "--is_result_change", type=bool, help="indicate if image_result changed", default='false')
+
+    parser.add_argument("-w", "--is_worker_change", type=bool, help="indicate if image_worker changed", default='false')
+
     # Execute the parse_args() method
     args: NameSpace = parser.parse_args()
-    # Change directory to where create_sysroot_sdk.sh is located.
+    # Change directory to where dev_values.yaml is located.
     os.chdir(args.path)
 
     # Checkout to target branch
     cmd: str = "git checkout " + args.target_branch
+    print ("cmd = " + cmd)
     result: list = subprocess.getstatusoutput(cmd)
     error_check(result, cmd)
 
     # Reset target branch to source branch
     cmd = "git reset --hard origin/" + args.source_branch
+    print ("cmd = " + cmd)
     result = subprocess.getstatusoutput(cmd)
     error_check(result, cmd)
 
     # Read current version from dev-values.yaml file
-    version_info: str = read_current_version()
+    version_info: dict = read_current_version()
 
-    cmd = "git tag -n v" + version_info
-    result = subprocess.getstatusoutput(cmd)
-    print (result[0])
-    if result[0] != 0:
-        # Tag commit with current app versions
-        cmd = "git tag v" + version_info
-        result = subprocess.getstatusoutput(cmd)
-        error_check(result, cmd)
+    for key, value in version_info.items():
+        if key == "image_vote" and args.is_vote_change or \
+            key == "image_result" and args.is_result_change or \
+            key == "image_worker" and args.is_worker_change:
+            tag: str = key + "_v" + value
+            # Check if tag already exist
+            cmd = "git tag -n " + tag
+            print ("cmd = " + cmd)
+            result = subprocess.getoutput(cmd)
+            print ("result = " + result)
+            # If tag not exist, create it
+            if result == "":
+                # Tag commit with current app versions
+                cmd = "git tag " + tag
+                print ("cmd = " + cmd)
+                result = subprocess.getstatusoutput(cmd)
+                error_check(result, cmd)
 
-        # Push tag to remote
-        cmd = "git push origin v" + version_info
-        result = subprocess.getstatusoutput(cmd)
-        error_check(result, cmd)
+                # Push tag to remote
+                cmd = "git push origin " + tag
+                print ("cmd = " + cmd)
+                result = subprocess.getstatusoutput(cmd)
+                error_check(result, cmd)
 
-        # Push target branch
-        cmd = "git push"
-        result = subprocess.getstatusoutput(cmd)
-        error_check(result, cmd)
+                # Push target branch
+                cmd = "git push"
+                print ("cmd = " + cmd)
+                result = subprocess.getstatusoutput(cmd)
+                error_check(result, cmd)
 
     # Checkout to source branch
     cmd = "git checkout " + args.source_branch
+    print ("cmd = " + cmd)
     result = subprocess.getstatusoutput(cmd)
     error_check(result, cmd)
 
-    if args.update == '':
-        # Increment source sysyroot_sdk  version
-        current_version = increment_version(version_info, args.increment)
-    else:
-        # Update source sysyroot_sdk project version
-        current_version = increment_version(version_info, args.update)
+    for key, value in version_info.items():
+        if key == "image_vote" and args.is_vote_change or \
+            key == "image_result" and args.is_result_change or \
+            key == "image_worker" and args.is_worker_change:
 
-        # Add and commit change to source_branch
-        cmd = "git add dev-values.yaml"
-        result = subprocess.getstatusoutput(cmd)
-        error_check(result, cmd)
+            if args.update == '':
+                # Increment source version
+                current_version = increment_version(key, value, args.increment)
+            else:
+                # Update source version
+                current_version = increment_version(key, value, args.update)
 
-    commit_message: str = " vote :: incremented to v" + current_version
-    cmd = "git commit -a -m " + "\"" + commit_message + "\""
-    result = subprocess.getstatusoutput(cmd)
-    error_check(result, cmd)
+            # Add and commit change to source_branch
+            cmd = "git add dev-values.yaml"
+            print ("cmd = " + cmd)
+            result = subprocess.getstatusoutput(cmd)
+            error_check(result, cmd)
 
-    # Push changes to source_branch
-    cmd = "git push"
-    result = subprocess.getstatusoutput(cmd)
-    error_check(result, cmd)
+            commit_message: str = key + " :: incremented to " + key + "_v"  + current_version
+            cmd = "git commit -a -m " + "\"" + commit_message + "\""
+            print ("cmd = " + cmd)
+            result = subprocess.getstatusoutput(cmd)
+            error_check(result, cmd)
 
-def read_current_version() -> str:
+            # Push changes to source_branch
+            cmd = "git push"
+            print ("cmd = " + cmd)
+            result = subprocess.getstatusoutput(cmd)
+            error_check(result, cmd)
+
+def read_current_version() -> dict:
     """
-    :brief: read current sysyroot_sdk version.
-    :return: string, current sysyroot_sdk version
+    :brief: read current image_vote version.
+    :return: string, current image_vote version
     """
     with open("dev-values.yaml", "r") as dev_values:
         values_list = yaml.load(dev_values)
         dict_ver = {}
     for key, value in values_list.items():
-        if key in ("image_vote"): #, "image_result", "image_worker"):
+        if key in ("image_vote", "image_result", "image_worker"):
             ver = value.get('tag')
             print (str(key) + " : " + str(ver))
             dict_ver[key] = ver
 
     print (dict_ver)
-
-
-    #main_sysroot_str = dev_values.read()
-    #current_version: str = re.findall("sysroots_sdk_version=(\"\d+\.\d+\.\d+\")", main_sysroot_str)[0]
-    #current_version = current_version.strip('"');
-    #version_info: str = current_version
-    #return version_info
-    return ver
+    return dict_ver
 
 
 
 
-def increment_version(current_version: str, increment: str) -> str:
+def increment_version(image_name: str, current_version: str, increment: str) -> str:
     """
     :brief: increment app version.
     :param: current_version - current app version
@@ -152,8 +173,8 @@ def increment_version(current_version: str, increment: str) -> str:
         # substitute new version with the old one.
         print ("current_version = " + current_version + "\n"
                "increment = " + increment + "\n"
-               "read_dev_values = " + read_dev_values.get('image_vote').get('tag'))
-        read_dev_values.get('image_vote')['tag'] = increment
+               "read_dev_values = " + read_dev_values.get(image_name).get('tag'))
+        read_dev_values.get(image_name)['tag'] = increment
         yaml.dump(read_dev_values, dev_values, default_flow_style=False)
         #read_dev_values = re.sub(current_version, increment, read_dev_values.get[0].get('tag'))
         #dev_values.write(read_dev_values)
