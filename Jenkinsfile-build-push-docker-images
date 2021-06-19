@@ -52,8 +52,12 @@ pipeline {
 
     stage('Read current versions') {
         steps {
-            library 'buildUtils'
-            readCurrentVersion()
+            //library 'buildUtils'
+            //readCurrentVersion()
+            script {
+                def datas = readYaml file: '"${env.WORKSPACE}"/dev-values.yaml'
+                datas.each{println it.subject}
+            }
         }
     }
 
