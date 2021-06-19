@@ -8,9 +8,10 @@ def call() {
     sh "ls -l ${env.WORKSPACE}/dev-values.yaml"
     echo "Print dev-values.yaml"
 
+    datas = readYaml file: "${env.WORKSPACE}/dev-values.yaml"
     //Yaml parser = new Yaml()
     //List example = parser.load(("${env.WORKSPACE}/dev-values.yaml" as File).text)
 
-    //example.each{println it.subject}
+    datas.each{println it.subject}
 }
 
