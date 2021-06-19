@@ -62,11 +62,6 @@ pipeline {
                 IMAGE_APP_VERSION    = "${datas.image_vote}"
                 IMAGE_WORKER         = "${datas.image_worker}"
 
-                echo "env.IMAGE_VOTE = ${env.IMAGE_VOTE}"
-                echo "env.IMAGE_RESULT = ${env.IMAGE_RESULT}"
-                echo "env.IMAGE_APP_VERSION = ${env.IMAGE_APP_VERSION}"
-                echo "env.IMAGE_WORKER = ${env.IMAGE_WORKER}"
-
                 echo "IMAGE_VOTE = ${IMAGE_VOTE}"
                 echo "IMAGE_RESULT = ${IMAGE_RESULT}"
                 echo "IMAGE_APP_VERSION = ${IMAGE_APP_VERSION}"
@@ -91,26 +86,26 @@ pipeline {
     /*
     stage('Build result') {
         steps {
-            sh "docker build -t liorbenami/result:${env.BUILD_ID} ./result"
+            sh "docker build -t liorbenami/result:${IMAGE_RESULT} ./result"
         }
     }
 
     stage('Build vote') {
       steps {
-        sh "docker build -t liorbenami/vote:${env.BUILD_ID} ./vote"
+        sh "docker build -t liorbenami/vote:${IMAGE_VOTE} ./vote"
       }
     }
 
     stage('Build worker') {
       steps {
-        sh "docker build -t liorbenami/worker:${env.BUILD_ID} ./worker"
+        sh "docker build -t liorbenami/worker:${IMAGE_WORKER} ./worker"
       }
     }
 
     stage('Push result image') {
            steps {
         withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
-          sh "docker push liorbenami/result:${env.BUILD_ID}"
+          sh "docker push liorbenami/result:${IMAGE_RESULT}"
         }
       }
     }
@@ -118,7 +113,7 @@ pipeline {
     stage('Push vote image') {
             steps {
         withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
-          sh "docker push liorbenami/vote:${env.BUILD_ID}"
+          sh "docker push liorbenami/vote:${IMAGE_VOTE}"
         }
       }
     }
@@ -126,7 +121,7 @@ pipeline {
     stage('Push worker image') {
             steps {
         withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
-          sh "docker push liorbenami/worker:${env.BUILD_ID}"
+          sh "docker push liorbenami/worker:${IMAGE_WORKER}"
         }
       }
     }
