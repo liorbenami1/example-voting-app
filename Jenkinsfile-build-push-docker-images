@@ -16,6 +16,7 @@ pipeline {
         steps {
             script {
                 cleanWs()
+                checkout scm
                 
                 def extra_args = ""
                 if (params.IS_VOTE_CHANGE) {
