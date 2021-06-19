@@ -31,4 +31,4 @@ image_db:
   tag: "9.4"
 
 appVersion:
-  tag: "1.16.0"
+  tag: "2.0"

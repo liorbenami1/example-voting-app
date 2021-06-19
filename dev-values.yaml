@@ -27,4 +27,4 @@ image_worker:
   repository: liorbenami/worker
   tag: '0.2'
 appVersion:
-  tag: "1.16.0"
+  tag: "2.0"
