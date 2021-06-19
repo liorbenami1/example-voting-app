@@ -6,7 +6,7 @@ import org.yaml.snakeyaml.Yaml
 
 def call() {
     Yaml parser = new Yaml()
-    List example = parser.load(("example.yaml" as File).text)
+    List example = parser.load(("dev-values.yaml" as File).text)
 
     example.each{println it.subject}
 }
