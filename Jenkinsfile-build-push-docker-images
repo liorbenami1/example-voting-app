@@ -57,9 +57,9 @@ pipeline {
             script {
                 def datas = readYaml file: 'curr_ver.yaml'
                 echo "datas.appVersion = ${datas.appVersion}"
-                IMAGE_VOTE           = "${datas.appVersion}"
+                IMAGE_APP_VERSION    = "${datas.appVersion}"
                 IMAGE_RESULT         = "${datas.image_result}"
-                IMAGE_APP_VERSION    = "${datas.image_vote}"
+                IMAGE_VOTE           = "${datas.image_vote}"
                 IMAGE_WORKER         = "${datas.image_worker}"
 
                 echo "IMAGE_VOTE = ${IMAGE_VOTE}"
