@@ -134,7 +134,7 @@ def main() -> dict:
             print ("cmd = " + cmd)
             result = subprocess.getstatusoutput(cmd)
             error_check(result, cmd)
-    return version_info
+    print (version_info)
 
 def read_current_version() -> dict:
     """
