@@ -1,7 +1,14 @@
 pipeline {
-  agent {
+    agent {
       label 'BUILD_AGENT'
     }
+
+            environment {
+                IMAGE_VOTE = "0"
+                IMAGE_RESULT = "0"
+                IMAGE_WORKER = "0"
+                IMAGE_APP_VERSION = "0"
+            }
 
     parameters {
       string(name: 'SOURCE_BRANCH_NAME', defaultValue: 'master', description: 'Git source branch to be released')
@@ -42,11 +49,18 @@ pipeline {
             }
         }
     }
+
+    stage('Read current versions') {
+        steps {
+            readCurrentVersion()
+        }
+    }
+
     /*
     stage('Build result') {
-      steps {
-        sh "docker build -t liorbenami/result:${env.BUILD_ID} ./result"
-      }
+        steps {
+            sh "docker build -t liorbenami/result:${env.BUILD_ID} ./result"
+        }
     }
 
     stage('Build vote') {
@@ -84,6 +98,6 @@ pipeline {
         }
       }
     }
-    */
+  */
   }
 }
