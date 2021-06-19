@@ -29,3 +29,6 @@ image_db:
   repository: postgres
   pullPolicy: "IfNotPresent"
   tag: "9.4"
+
+appVersion:
+  tag: "1.16.0"

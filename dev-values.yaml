@@ -26,3 +26,5 @@ image_worker:
   replicas: 1
   repository: liorbenami/worker
   tag: '0.2'
+appVersion:
+  tag: "1.16.0"

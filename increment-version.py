@@ -70,7 +70,8 @@ def main():
     for key, value in version_info.items():
         if key == "image_vote" and args.is_vote_change or \
             key == "image_result" and args.is_result_change or \
-            key == "image_worker" and args.is_worker_change:
+            key == "image_worker" and args.is_worker_change or \
+            key == "appVersion":
             tag: str = key + "_v" + value
             # Check if tag already exist
             cmd = "git tag -n " + tag
@@ -106,7 +107,8 @@ def main():
     for key, value in version_info.items():
         if key == "image_vote" and args.is_vote_change or \
             key == "image_result" and args.is_result_change or \
-            key == "image_worker" and args.is_worker_change:
+            key == "image_worker" and args.is_worker_change or \
+            key == "appVersion":
 
             if args.update == '':
                 # Increment source version
@@ -135,14 +137,14 @@ def main():
 
 def read_current_version() -> dict:
     """
-    :brief: read current image_vote version.
-    :return: string, current image_vote version
+    :brief: read current version ("image_vote", "image_result", "image_worker", "appVersion").
+    :return: dict, current version for each ("image_vote", "image_result", "image_worker", "appVersion")
     """
     with open("dev-values.yaml", "r") as dev_values:
         values_list = yaml.load(dev_values)
         dict_ver = {}
     for key, value in values_list.items():
-        if key in ("image_vote", "image_result", "image_worker"):
+        if key in ("image_vote", "image_result", "image_worker", "appVersion"):
             ver = value.get('tag')
             print (str(key) + " : " + str(ver))
             dict_ver[key] = ver
