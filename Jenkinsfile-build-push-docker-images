@@ -85,44 +85,74 @@ pipeline {
 
     stage('Build result') {
         steps {
-            sh "docker build -t liorbenami/result:${IMAGE_RESULT} ./result"
+            script {
+                if (env.IS_RESULT_CHANGE) {
+                    sh ("docker build -t liorbenami/result:${IMAGE_RESULT} ./result")
+                }else {
+                    echo "Result image didn't change. No need to build. Abort"
+                }
+            }
         }
     }
 
     stage('Build vote') {
       steps {
-        sh "docker build -t liorbenami/vote:${IMAGE_VOTE} ./vote"
+          script {
+              if (env.IS_VOTE_CHANGE) {
+                  sh ("docker build -t liorbenami/vote:${IMAGE_VOTE} ./vote")
+              }else {
+                  echo "Vote image didn't change. No need to build. Abort"
+              }
+          }
       }
     }
 
     stage('Build worker') {
-      steps {
-        sh "docker build -t liorbenami/worker:${IMAGE_WORKER} ./worker"
-      }
+        steps {
+            script {
+                if (env.IS_WORKER_CHANGE) {
+                    sh ("docker build -t liorbenami/worker:${IMAGE_WORKER} ./worker")
+                }else {
+                    echo "Worker image didn't change. No need to build. Abort"
+                }
+            }
+        }
     }
 
     stage('Push result image') {
-           steps {
-        withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
-          sh "docker push liorbenami/result:${IMAGE_RESULT}"
+        steps {
+            script {
+                if (env.IS_RESULT_CHANGE) {
+                    withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
+                    sh "docker push liorbenami/result:${IMAGE_RESULT}"
+                    }
+                }
+            }
         }
-      }
     }
 
     stage('Push vote image') {
-            steps {
-        withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
-          sh "docker push liorbenami/vote:${IMAGE_VOTE}"
+        steps {
+            script {
+                if (env.IS_VOTE_CHANGE) {
+                    withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
+                    sh "docker push liorbenami/vote:${IMAGE_VOTE}"
+                    }
+                }
+            }
         }
-      }
     }
 
     stage('Push worker image') {
-            steps {
-        withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
-          sh "docker push liorbenami/worker:${IMAGE_WORKER}"
+        steps {
+            script {
+                if (env.IS_WORKER_CHANGE) {
+                    withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
+                    sh "docker push liorbenami/worker:${IMAGE_WORKER}"
+                    }
+                }
+            }
         }
-      }
     }
   }
 }
