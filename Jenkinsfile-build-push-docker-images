@@ -24,7 +24,7 @@ pipeline {
             script {
                 cleanWs()
                 checkout scm
-                
+
                 def extra_args = ""
                 if (params.IS_VOTE_CHANGE) {
                     extra_args += "--is_vote_change "
@@ -52,6 +52,7 @@ pipeline {
 
     stage('Read current versions') {
         steps {
+            library 'buildUtils'
             readCurrentVersion()
         }
     }
@@ -101,3 +102,4 @@ pipeline {
   */
   }
 }
+
