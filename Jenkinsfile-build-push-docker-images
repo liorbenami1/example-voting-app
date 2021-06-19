@@ -79,14 +79,18 @@ pipeline {
                             continue
                     */
 
-                    if env.IMAGE_VOTE == "0":
+                    if (env.IMAGE_VOTE == "0") {
                         print ("Can't read IMAGE_VOTE version")
-                    if env.IMAGE_RESULT == "0":
+                    }
+                    if (env.IMAGE_RESULT == "0") {
                         print ("Can't read IMAGE_RESULT version")
-                    if env.IMAGE_WORKER == "0":
+                    }
+                    if (env.IMAGE_WORKER == "0") {
                         print ("Can't read IMAGE_WORKER version")
-                    if env.IMAGE_APP_VERSION == "0":
+                    }
+                    if (env.IMAGE_APP_VERSION == "0") {
                         print ("Can't read IMAGE_APP_VERSION version")
+                    }
             }
         }
     }
