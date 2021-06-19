@@ -55,7 +55,7 @@ pipeline {
             //library 'buildUtils'
             //readCurrentVersion()
             script {
-                def datas = readYaml file: '"${env.WORKSPACE}"/dev-values.yaml'
+                def datas = readYaml file: 'dev-values.yaml'
                 datas.each{println it.subject}
             }
         }
