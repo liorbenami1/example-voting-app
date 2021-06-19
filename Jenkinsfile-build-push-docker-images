@@ -1,7 +1,14 @@
 pipeline {
-  agent {
+    agent {
       label 'BUILD_AGENT'
     }
+
+            environment {
+                IMAGE_VOTE = "0"
+                IMAGE_RESULT = "0"
+                IMAGE_WORKER = "0"
+                IMAGE_APP_VERSION = "0"
+            }
 
     parameters {
       string(name: 'SOURCE_BRANCH_NAME', defaultValue: 'master', description: 'Git source branch to be released')
@@ -42,11 +49,52 @@ pipeline {
             }
         }
     }
+
+    stage('Read current versions') {
+        steps {
+            script {
+                    #!/usr/bin/python3.6
+
+                    import subprocess
+                    import os
+                    import re
+                    import sys
+                    import yaml
+
+                    with open("curr_ver.yaml", "r") as file:
+                        ver_list = yaml.load(file)
+
+                    for key, value in ver_list.items():
+                        if key ==  "image_vote":
+                            env.IMAGE_VOTE = value
+                            continue
+                        if key ==  "image_result":
+                            env.IMAGE_RESULT = value
+                            continue
+                        if key == "image_worker":
+                            env.IMAGE_WORKER = value
+                            continue
+                        if key == "appVersion":
+                            env.IMAGE_APP_VERSION
+                            continue
+
+                    if env.IMAGE_VOTE == "0":
+                        print ("Can't read IMAGE_VOTE version")
+                    if env.IMAGE_RESULT == "0":
+                        print ("Can't read IMAGE_RESULT version")
+                    if env.IMAGE_WORKER == "0":
+                        print ("Can't read IMAGE_WORKER version")
+                    if env.IMAGE_APP_VERSION == "0":
+                        print ("Can't read IMAGE_APP_VERSION version")
+            }
+        }
+    }
+
     /*
     stage('Build result') {
-      steps {
-        sh "docker build -t liorbenami/result:${env.BUILD_ID} ./result"
-      }
+        steps {
+            sh "docker build -t liorbenami/result:${env.BUILD_ID} ./result"
+        }
     }
 
     stage('Build vote') {
@@ -84,6 +132,6 @@ pipeline {
         }
       }
     }
-    */
+  */
   }
 }
