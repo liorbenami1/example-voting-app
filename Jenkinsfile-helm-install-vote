@@ -95,7 +95,7 @@
             steps {
                 script {
                     sh "kubectl get nodes -o wide"
-                    sh "kubectl get pods -l release=my-vote"
+                    sh "kubectl get pods -n vote"
                     sh "kubectl get pods -l release=my-prom"
 
                     echo "expose prometheus:"
