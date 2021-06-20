@@ -47,8 +47,9 @@ pipeline {
                         cmd = "install"
                         skipRemainingStages = false
                     }
-                    sh (script: "helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}",
-                        returnStdout: true).trim()
+                    def helmCmdStatus = sh (script: "helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}",
+                    returnStdout: true).trim()
+                    echo "helmCmdStatus = ${helmCmdStatus}"
                 }
             }
         }
