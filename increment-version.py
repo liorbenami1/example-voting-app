@@ -52,6 +52,49 @@ def main() -> dict:
     # Change directory to where dev_values.yaml is located.
     os.chdir(args.path)
 
+    # Read current versions from dev-values.yaml file
+    version_info: dict = read_current_version()
+
+    # Checkout to source branch
+    cmd = "git checkout " + args.source_branch
+    print ("cmd = " + cmd)
+    result = subprocess.getstatusoutput(cmd)
+    error_check(result, cmd)
+
+    for key, value in version_info.items():
+        if key == "image_vote" and args.is_vote_change or \
+                key == "image_result" and args.is_result_change or \
+                key == "image_worker" and args.is_worker_change or \
+                key == "appVersion":
+
+            if args.update == '':
+                # Increment source version
+                current_version = increment_version(key, value, args.increment)
+            else:
+                # Update source version
+                current_version = increment_version(key, value, args.update)
+
+            # Add and commit change to source_branch
+            cmd = "git add dev-values.yaml"
+            print ("cmd = " + cmd)
+            result = subprocess.getstatusoutput(cmd)
+            error_check(result, cmd)
+
+            commit_message: str = key + " :: incremented to " + key + "_v"  + current_version
+            cmd = "git commit -a -m " + "\"" + commit_message + "\""
+            print ("cmd = " + cmd)
+            result = subprocess.getstatusoutput(cmd)
+            error_check(result, cmd)
+
+            # Push changes to source_branch
+            cmd = "git push"
+            print ("cmd = " + cmd)
+            result = subprocess.getstatusoutput(cmd)
+            error_check(result, cmd)
+
+    # Read new versions from dev-values.yaml file
+    new_version_info: dict = read_current_version()
+
     # Checkout to target branch
     cmd: str = "git checkout " + args.target_branch
     print ("cmd = " + cmd)
@@ -64,10 +107,7 @@ def main() -> dict:
     result = subprocess.getstatusoutput(cmd)
     error_check(result, cmd)
 
-    # Read current versions from dev-values.yaml file
-    version_info: dict = read_current_version()
-
-    for key, value in version_info.items():
+    for key, value in new_version_info.items():
         if key == "image_vote" and args.is_vote_change or \
             key == "image_result" and args.is_result_change or \
             key == "image_worker" and args.is_worker_change or \
@@ -98,46 +138,11 @@ def main() -> dict:
                 result = subprocess.getstatusoutput(cmd)
                 error_check(result, cmd)
 
-    # Checkout to source branch
-    cmd = "git checkout " + args.source_branch
-    print ("cmd = " + cmd)
-    result = subprocess.getstatusoutput(cmd)
-    error_check(result, cmd)
 
-    for key, value in version_info.items():
-        if key == "image_vote" and args.is_vote_change or \
-            key == "image_result" and args.is_result_change or \
-            key == "image_worker" and args.is_worker_change or \
-            key == "appVersion":
-
-            if args.update == '':
-                # Increment source version
-                current_version = increment_version(key, value, args.increment)
-            else:
-                # Update source version
-                current_version = increment_version(key, value, args.update)
-
-            # Add and commit change to source_branch
-            cmd = "git add dev-values.yaml"
-            print ("cmd = " + cmd)
-            result = subprocess.getstatusoutput(cmd)
-            error_check(result, cmd)
-
-            commit_message: str = key + " :: incremented to " + key + "_v"  + current_version
-            cmd = "git commit -a -m " + "\"" + commit_message + "\""
-            print ("cmd = " + cmd)
-            result = subprocess.getstatusoutput(cmd)
-            error_check(result, cmd)
-
-            # Push changes to source_branch
-            cmd = "git push"
-            print ("cmd = " + cmd)
-            result = subprocess.getstatusoutput(cmd)
-            error_check(result, cmd)
 
     # print current version to curr_ver.yaml (new file)
     with open("curr_ver.yaml", "w+") as file:
-        yaml.dump(version_info, file, default_flow_style=False)
+        yaml.dump(new_version_info, file, default_flow_style=False)
 
 def read_current_version() -> dict:
     """
