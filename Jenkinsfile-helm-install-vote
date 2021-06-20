@@ -1,20 +1,8 @@
-
-
-/*
-    Create the kubernetes namespace
- */
-def createNamespace (namespace) {
-    echo "Creating namespace ${namespace} if needed"
-
-    sh "[ ! -z \"\$(kubectl get ns ${namespace} -o name 2>/dev/null)\" ] || kubectl create ns ${namespace}"
-}
-
-
-pipeline {
+ pipeline {
     agent {
         label 'BUILD_AGENT'
     }
-  
+
     parameters {
               string(name: 'HELM_NAME', defaultValue: 'my-vote', description: 'The Helm name')
               string(name: 'HELM_DIR_NAME', defaultValue: 'vote-helm', description: 'The Helm directory name')
@@ -32,6 +20,7 @@ pipeline {
             steps {
                 cleanWs()
                 checkout scm
+                sh(returnStdout: true, script: "git config --global credential.helper 'cache --timeout=3600'")
             }
         }
 
