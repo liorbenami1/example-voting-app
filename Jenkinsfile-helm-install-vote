@@ -37,23 +37,23 @@ pipeline {
         stage('Helm install or upgrade my-vote') {
             steps {
                 script {
-                    def cmd = "upgrade"
-                    skipRemainingStages = true
+                    def cmd = "install"
+                    skipRemainingStages = false
                     def helmStatus = sh (
                         script: "helm status ${params.HELM_NAME}",
-                        returnStdout: true).trim()
+                        returnStatus: true) == 0
                     echo "helmStatus = ${helmStatus}"
-                    if (helmStatus.contains("Error")) {
-                        cmd = "install"
-                        skipRemainingStages = false
+                    if (helmStatus) {
+                        cmd = "upgrade"
+                        skipRemainingStages = true
                     }
                     def helmCmdStatus = sh (
                         script: "helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}",
-                        returnStdout: true).trim()
+                        returnStatus: true) == 0
                     echo "helmCmdStatus = ${helmCmdStatus}"
                 }
-                echo "Run from sh:"
-                sh "helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}"
+                //echo "Run from sh:"
+                //sh "helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}"
             }
         }
 
