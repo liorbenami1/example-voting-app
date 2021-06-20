@@ -21,7 +21,7 @@ image_vote:
   pullPolicy: IfNotPresent
   replicas: 1
   repository: liorbenami/vote
-  tag: '1.14'
+  tag: '1.15'
   targetPort: 80
 image_worker:
   pullPolicy: IfNotPresent
