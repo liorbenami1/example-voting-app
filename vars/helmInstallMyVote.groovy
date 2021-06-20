@@ -21,8 +21,10 @@ def call() {
         stages {
             stage('clean workspace') {
                 steps {
-                    cleanWs()
-                    checkout scm
+                    script {
+                        cleanWs()
+                        checkout scm
+                    }
                 }
             }
 
