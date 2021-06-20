@@ -24,5 +24,13 @@ pipeline {
         sh "terraform -chdir=${env.TF_WORKDIR} apply -input=false tfplan"
       }
     }
+
+    stage('Sleep') {
+        steps {
+            echo "Sleeping for 5min..."
+            sh 'sleep 300'
+            echo "wake up"
+        }
+    }
   }
 }
