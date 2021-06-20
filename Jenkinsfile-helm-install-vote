@@ -48,8 +48,6 @@
                         returnStatus: true) == 0
                     echo "helmCmdStatus = ${helmCmdStatus}"
                 }
-                //echo "Run from sh:"
-                //sh "helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}"
             }
         }
 
