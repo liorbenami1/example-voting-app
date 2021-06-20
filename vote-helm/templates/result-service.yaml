@@ -9,8 +9,8 @@ spec:
   type: NodePort
   ports:
   - name: "result-service"
-    port: {{ .Values.image_result.port}}
-    targetPort: {{ .Values.image_result.targetPort}}
-    nodePort: {{ .Values.image_result.nodePort}}
+    port: "{{ .Values.image_result.port}}"
+    targetPort: "{{ .Values.image_result.targetPort}}"
+    nodePort: "{{ .Values.image_result.nodePort}}"
   selector:
     app: result

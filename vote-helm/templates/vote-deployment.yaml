@@ -6,7 +6,7 @@ metadata:
   name: vote
   namespace: vote
 spec:
-  replicas: {{ .Values.image_vote.replicas}}
+  replicas: "{{ .Values.image_vote.replicas}}"
   selector:
     matchLabels:
       app: vote
