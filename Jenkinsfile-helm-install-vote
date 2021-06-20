@@ -38,12 +38,14 @@ pipeline {
             steps {
                 script {
                     def cmd = "upgrade"
+                    skipRemainingStages = true
                     def helmStatus = sh (
                         script: "helm status ${params.HELM_NAME}",
                         returnStdout: true).trim()
                     echo "helmStatus = ${helmStatus}"
                     if (helmStatus.contains("Error")) {
                         cmd = "install"
+                        skipRemainingStages = false
                     }
                     sh ("helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}")
                 }
@@ -51,6 +53,11 @@ pipeline {
         }
 
         stage('gcloud create firewall-rules') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             steps {
                 sh "gcloud compute firewall-rules create node-port-${params.VOTE_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.VOTE_PORT}"
                 sh "gcloud compute firewall-rules create node-port-${params.RESULT_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.RESULT_PORT}"
@@ -58,6 +65,11 @@ pipeline {
         }
 
         stage('helm install prometheus') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             steps {
                 script {
                     sh "helm install my-prom prometheus"
@@ -66,6 +78,11 @@ pipeline {
         }
 
         stage('helm install grafana') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             steps {
                 script {
                     sh "helm install my-grafana grafana"
