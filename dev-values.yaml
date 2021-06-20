@@ -11,7 +11,7 @@ image_result:
   nodePort: 31001
   port: 5001
   pullPolicy: IfNotPresent
-  replicas: 1
+  replicas: 2
   repository: liorbenami/result
   tag: '0.16'
   targetPort: 80
@@ -19,12 +19,12 @@ image_vote:
   nodePort: 31000
   port: 5000
   pullPolicy: IfNotPresent
-  replicas: 1
+  replicas: 3
   repository: liorbenami/vote
   tag: '1.23'
   targetPort: 80
 image_worker:
   pullPolicy: IfNotPresent
-  replicas: 1
+  replicas: 6
   repository: liorbenami/worker
   tag: '0.17'
