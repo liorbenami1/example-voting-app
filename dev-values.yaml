@@ -1,5 +1,5 @@
 appVersion:
-  tag: '2.66'
+  tag: '2.69'
 image_db:
   pullPolicy: IfNotPresent
   repository: postgres
@@ -13,7 +13,7 @@ image_result:
   pullPolicy: IfNotPresent
   replicas: 2
   repository: liorbenami/result
-  tag: '0.16'
+  tag: '0.17'
   targetPort: 80
 image_vote:
   nodePort: 31000
@@ -21,10 +21,10 @@ image_vote:
   pullPolicy: IfNotPresent
   replicas: 3
   repository: liorbenami/vote
-  tag: '1.23'
+  tag: '1.25'
   targetPort: 80
 image_worker:
   pullPolicy: IfNotPresent
   replicas: 6
   repository: liorbenami/worker
-  tag: '0.17'
+  tag: '0.19'
