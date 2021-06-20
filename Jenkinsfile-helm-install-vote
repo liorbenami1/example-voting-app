@@ -40,7 +40,7 @@ pipeline {
                     def cmd = "upgrade"
                     def status = sh ("helm status ${params.HELM_NAME}")
                     echo "status = ${status}"
-                    if ("status.contain("NAME: ${params.HELM_NAME}")") {
+                    if (status.contain("NAME: ${params.HELM_NAME}")) {
                         cmd = "install"
                     }
                     sh ("helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}")
