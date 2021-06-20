@@ -28,10 +28,12 @@ def call() {
 
             stage('gcloud config') {
                 steps {
-                    def gcloudInit = sh ("gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}",
-                            returnStatus: true) == 0
-                    if (gcloudInit) {
-                        echo "gcloud config finished"
+                    script {
+                        def gcloudInit = sh ("gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}",
+                                returnStatus: true) == 0
+                        if (gcloudInit) {
+                            echo "gcloud config finished"
+                        }
                     }
                 }
               }
@@ -54,8 +56,6 @@ def call() {
                             returnStatus: true) == 0
                         echo "helmCmdStatus = ${helmCmdStatus}"
                     }
-                    //echo "Run from sh:"
-                    //sh "helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}"
                 }
             }
 
@@ -66,12 +66,14 @@ def call() {
                     }
                 }
                 steps {
-                    def nodePort31000 = sh ("gcloud compute firewall-rules create node-port-${params.VOTE_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.VOTE_PORT}",
-                            returnStatus: true) == 0
-                    def nodePort31001 = sh ("gcloud compute firewall-rules create node-port-${params.RESULT_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.RESULT_PORT}",
-                            returnStatus: true) == 0
-                    if(nodePort31000 && nodePort31001) {
-                        echo "firewall-rules for ports: 31000 & 31001 created successfully"
+                    script {
+                        def nodePort31000 = sh ("gcloud compute firewall-rules create node-port-${params.VOTE_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.VOTE_PORT}",
+                                returnStatus: true) == 0
+                        def nodePort31001 = sh ("gcloud compute firewall-rules create node-port-${params.RESULT_PORT} --network ${params.GCP_CLUSTER_VPC_NAME} --allow tcp:${params.RESULT_PORT}",
+                                returnStatus: true) == 0
+                        if(nodePort31000 && nodePort31001) {
+                            echo "firewall-rules for ports: 31000 & 31001 created successfully"
+                        }
                     }
                 }
             }
@@ -89,7 +91,6 @@ def call() {
                         if(prom) {
                             echo "prometheus created successfully"
                         }
-
                     }
                 }
             }
