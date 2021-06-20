@@ -14,7 +14,6 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     build job: 'helm-delete-vote', propagate: true, wait: true
                 }
-
             }
         }
 

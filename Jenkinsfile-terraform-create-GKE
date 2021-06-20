@@ -8,6 +8,10 @@ pipeline {
         TF_IN_AUTOMATION = 'true'
     }
 
+    parameters {
+        string(name: 'TIME_TO_SLEEP', defaultValue: '10', description: 'Time to sleep in minutes')
+    }
+
     stages {
         stage('Terraform Init') {
             steps {
@@ -30,8 +34,9 @@ pipeline {
 
         stage('Sleep') {
             steps {
-                echo "Sleeping for 15min..."
-                sh 'sleep 900'
+                script {
+                    sh ("sleep ${params.TIME_TO_SLEEP}*60")
+                }
                 echo "wake up"
             }
         }
