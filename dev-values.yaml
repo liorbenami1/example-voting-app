@@ -13,7 +13,7 @@ image_result:
   pullPolicy: IfNotPresent
   replicas: 1
   repository: liorbenami/result
-  tag: '0.8'
+  tag: '0.9'
   targetPort: 80
 image_vote:
   nodePort: 31000
