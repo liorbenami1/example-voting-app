@@ -101,7 +101,7 @@ pipeline {
               if (params.IS_VOTE_CHANGE) {
                   sh ("docker build -t liorbenami/vote:${IMAGE_VOTE} ./vote")
               }else {
-                  echo "Vote image didn't change. No need to build. Abort"
+                  echo "Vote image didn't change. No need to build"
               }
           }
       }
@@ -113,7 +113,7 @@ pipeline {
                 if (params.IS_WORKER_CHANGE) {
                     sh ("docker build -t liorbenami/worker:${IMAGE_WORKER} ./worker")
                 }else {
-                    echo "Worker image didn't change. No need to build. Abort"
+                    echo "Worker image didn't change. No need to build"
                 }
             }
         }
@@ -126,7 +126,10 @@ pipeline {
                     withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
                     sh "docker push liorbenami/result:${IMAGE_RESULT}"
                     }
+                }else {
+                    echo "Result image didn't change. No need to Push"
                 }
+
             }
         }
     }
@@ -138,7 +141,9 @@ pipeline {
                     withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
                     sh "docker push liorbenami/vote:${IMAGE_VOTE}"
                     }
-                }
+                }else {
+                    echo "Vote image didn't change. No need to push"
+               }
             }
         }
     }
@@ -150,6 +155,8 @@ pipeline {
                     withDockerRegistry(credentialsId: 'dockerhub-liorbenami', url:'') {
                     sh "docker push liorbenami/worker:${IMAGE_WORKER}"
                     }
+                }else {
+                    echo "Worker image didn't change. No need to push"
                 }
             }
         }
