@@ -42,7 +42,7 @@ pipeline {
                         script: 'helm status "${params.HELM_NAME}"',
                         returnStdout: true).trim()
                     echo "helmStatus = ${helmStatus}"
-                    if (status.contain("NAME: ${params.HELM_NAME}")) {
+                    if (helmStatus.contains("Error")) {
                         cmd = "install"
                     }
                     sh ("helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}")
