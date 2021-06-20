@@ -21,14 +21,10 @@ def call() {
         stages {
             stage('gcloud config') {
                 steps {
-                    def gcloudInit = sh (
-                            "gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}",
+                    sh ("gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}",
                             returnStatus: true) == 0
-                    if (gcloudInit) {
-                        echo "gcloud config finished"
-                    }
                 }
-              }
+            }
 
             stage('Helm install or upgrade my-vote') {
                 steps {
