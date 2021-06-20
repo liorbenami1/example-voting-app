@@ -35,13 +35,12 @@ pipeline {
         stage('Sleep') {
             steps {
                 script {
-                    sh ("sleep ${params.TIME_TO_SLEEP}*60")
+                    int intNum = params.TIME_TO_SLEEP.toInteger() * 60
+                    sh ("sleep ${intNum}")
                 }
                 echo "wake up"
             }
         }
-
-
         stage ('Invoke helm-install-or-upgrade-my-vote pipeline') {
             steps {
                 build job: 'helm-install-or-upgrade-my-vote', propagate: true, wait: true

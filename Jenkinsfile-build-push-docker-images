@@ -52,8 +52,6 @@ pipeline {
 
     stage('Read current versions') {
         steps {
-            //library 'buildUtils'
-            //readCurrentVersion()
             script {
                 def datas = readYaml file: 'curr_ver.yaml'
                 echo "datas.appVersion = ${datas.appVersion}"
