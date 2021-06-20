@@ -34,7 +34,7 @@ pipeline {
             }
           }
 
-        stage('Helm install or upgrade ""${params.HELM_NAME}"') {
+        stage('Helm install or upgrade "${params.HELM_NAME}"') {
             steps {
                 script {
                     def cmd = "upgrade"
