@@ -34,10 +34,16 @@ pipeline {
             }
           }
 
-        stage('Helm install vote') {
+        stage('Helm install or upgrade ""${params.HELM_NAME}"') {
             steps {
                 script {
-                    sh "helm install ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}"
+                    def cmd = "upgrade"
+                    def status = sh ("helm status ${params.HELM_NAME}")
+                    echo "status = ${status}"
+                    if ("${status}.contain("NAME: ${params.HELM_NAME}")") {
+                        cmd = "install"
+                    }
+                    sh ("helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}")
                 }
             }
         }
