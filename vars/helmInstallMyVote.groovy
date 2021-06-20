@@ -19,6 +19,13 @@ def call() {
         }
 
         stages {
+            stage('clean workspace') {
+                steps {
+                    cleanWs()
+                    checkout scm
+                }
+            }
+            
             stage('gcloud config') {
                 steps {
                     sh "gcloud container clusters get-credentials ${params.GCP_CLUSTER_NAME} --region ${params.GCP_REGION_NAME} --project ${params.GCP_PROJECT_NAME}"
