@@ -19,15 +19,6 @@ def call() {
         }
 
         stages {
-            stage('clean workspace') {
-                steps {
-                    script {
-                        cleanWs()
-                        checkout scm
-                    }
-                }
-            }
-
             stage('gcloud config') {
                 steps {
                     script {
