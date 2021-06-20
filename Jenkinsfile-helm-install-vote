@@ -24,6 +24,7 @@ def call() {
                 steps {
                     cleanWs()
                     checkout scm
+                    sh(returnStdout: true, script: "git config --global credential.helper 'cache --timeout=3600'")
                 }
             }
 
