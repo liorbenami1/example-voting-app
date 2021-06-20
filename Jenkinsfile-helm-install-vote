@@ -39,7 +39,7 @@ pipeline {
                 script {
                     def cmd = "upgrade"
                     def helmStatus = sh (
-                        script: 'helm status ""${params.HELM_NAME}"',
+                        script: 'helm status "${params.HELM_NAME}"',
                         returnStdout: true).trim()
                     echo "helmStatus = ${helmStatus}"
                     if (status.contain("NAME: ${params.HELM_NAME}")) {
