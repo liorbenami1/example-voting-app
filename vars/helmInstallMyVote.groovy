@@ -1,6 +1,3 @@
-#!groovy
-
-def call() {
     pipeline {
         agent {
             label 'BUILD_AGENT'
