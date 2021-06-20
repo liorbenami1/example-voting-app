@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage ('Invoke helm-delete-vote pipeline') {
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     build job: 'helm-delete-vote', propagate: true, wait: true
                 }
             }
