@@ -48,7 +48,7 @@ pipeline {
                         skipRemainingStages = false
                     }
                     sh (script: "helm ${cmd} ${params.HELM_NAME} -f ${params.VALUES_FILE_NAME} ${params.HELM_DIR_NAME}",
-                        returnStdout: true).trim())
+                        returnStdout: true).trim()
                 }
             }
         }
