@@ -1,5 +1,5 @@
 appVersion:
-  tag: '2.29'
+  tag: '2.30'
 image_db:
   pullPolicy: IfNotPresent
   repository: postgres
