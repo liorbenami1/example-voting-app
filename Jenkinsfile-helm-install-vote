@@ -38,8 +38,10 @@ pipeline {
             steps {
                 script {
                     def cmd = "upgrade"
-                    def status = sh ("helm status ${params.HELM_NAME}")
-                    echo "status = ${status}"
+                    def helmStatus = sh (
+                        script: 'helm status ""${params.HELM_NAME}"',
+                        returnStdout: true).trim()
+                    echo "helmStatus = ${helmStatus}"
                     if (status.contain("NAME: ${params.HELM_NAME}")) {
                         cmd = "install"
                     }
