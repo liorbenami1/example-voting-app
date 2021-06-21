@@ -6,7 +6,7 @@ metadata:
   name: result
   namespace: vote
 spec:
-  replicas: "{{ .Values.image_result.replicas}}"
+  replicas: {{ .Values.image_result.replicas}}
   selector:
     matchLabels:
       app: result
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - image: "{{ .Values.image_result.repository}}:{{ .Values.image_result.tag}}"
-        imagePullPolicy: "{{ .Values.image_result.pullPolicy }}"
+        imagePullPolicy: {{ .Values.image_result.pullPolicy }}
         name: result
         ports:
         - containerPort: 80
