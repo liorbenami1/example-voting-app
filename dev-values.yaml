@@ -27,4 +27,4 @@ image_worker:
   pullPolicy: IfNotPresent
   replicas: 6
   repository: liorbenami/worker
-  tag: '0.21'
+  tag: '0.22'
